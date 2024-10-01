@@ -28,7 +28,7 @@ A **Servlet** is a Java class that extends `HttpServlet` and is capable of servi
 ### Annotations
 ```java
 @WebServlet("/example")
-
+```
 The @WebServlet annotation maps a Servlet class to a specific URL path, allowing the web container to direct requests to the appropriate Servlet.
 
 Servlet Lifecycle
@@ -42,8 +42,7 @@ The Servlet handles the request, processes it, and generates a dynamic response 
 Deployment Descriptor (web.xml)
 The web.xml file specifies the Servlet class and URL mappings.
 
-xml
-Copy code
+```java
 <servlet>
   <servlet-name>exampleServlet</servlet-name>
   <servlet-class>com.example.MyServlet</servlet-class>
@@ -53,6 +52,7 @@ Copy code
   <servlet-name>exampleServlet</servlet-name>
   <url-pattern>/example</url-pattern>
 </servlet-mapping>
+```
 HttpServlet
 HttpServlet is a Java class that enables you to work with HTTP requests and responses.
 
@@ -67,7 +67,7 @@ Maven Project Structure
 Archetype: A template that provides a basic project structure.
 Dependencies: Add required libraries in the pom.xml file to manage project dependencies.
 Example Maven Setup (pom.xml)
-
+```java
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -81,6 +81,7 @@ Example Maven Setup (pom.xml)
         <!-- Add your project dependencies here -->
     </dependencies>
 </project>
+```
 Basic Flow of a Servlet Application
 The client sends an HTTP request to the server.
 The web container routes the request to the appropriate Servlet based on the URL mapping defined in web.xml or through annotations.
