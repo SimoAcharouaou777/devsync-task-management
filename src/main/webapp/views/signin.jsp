@@ -14,7 +14,7 @@
 <body>
 <div class="container">
     <h2 class="mt-5">Login</h2>
-    <form action="${pageContext.request.contextPath}/login" method="post" class="mt-3">
+    <form action="${pageContext.request.contextPath}/signin" method="post" class="mt-3">
         <div class="form-group">
             <label for="username">Username:</label>
             <input type="text" class="form-control" id="username" name="username" required>

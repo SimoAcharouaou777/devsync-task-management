@@ -14,7 +14,7 @@
 <body>
 <div class="container">
     <h2 class="mt-5">Signup</h2>
-    <form action="${pageContext.request.contextPath}/register" method="post" class="mt-3">
+    <form action="${pageContext.request.contextPath}/signup" method="post" class="mt-3">
         <div class="form-group">
             <label for="username">Username:</label>
             <input type="text" class="form-control" id="username" name="username" required>
@@ -22,6 +22,18 @@
         <div class="form-group">
             <label for="password">Password:</label>
             <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="firstName">First Name:</label>
+            <input type="text" class="form-control" id="firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name:</label>
+            <input type="text" class="form-control" id="lastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
         </div>
         <button type="submit" class="btn btn-primary">Register</button>
     </form>
