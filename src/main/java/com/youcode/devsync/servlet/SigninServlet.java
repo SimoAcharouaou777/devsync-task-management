@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 @WebServlet(name = "SigninServlet", value = "/signin")
@@ -24,13 +25,16 @@ public class SigninServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request , HttpServletResponse response) throws ServletException , IOException{
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        if(userService.authenticateUser(username, password)){
-            response.sendRedirect(request.getContextPath() + "/home");
-        }else{
+        if (userService.authenticateUser(username, password)) {
+            HttpSession session = request.getSession();
+            session.setAttribute("username", username);
+            session.setAttribute("password", userService.getHashedPassword(username)); // Set hashed password in session
+            response.sendRedirect(request.getContextPath() + "/dashboardHome");
+        } else {
             response.sendRedirect(request.getContextPath() + "/signin?error=true");
         }
     }
