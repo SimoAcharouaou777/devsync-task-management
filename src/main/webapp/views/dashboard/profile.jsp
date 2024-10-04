@@ -49,22 +49,23 @@
 <div class="container">
   <h1>Profile Page</h1>
   <p>Welcome to your profile page.</p>
+  <% User user = (User) request.getAttribute("user"); %>
   <form action="<%= request.getContextPath() %>/updateProfile" method="post">
     <div class="form-group">
       <label for="username">Username</label>
-      <input type="text" class="form-control" id="username" name="username" value="<%= ((User) request.getAttribute("user")).getUsername() %>" required>
+      <input type="text" class="form-control" id="username" name="username" value="<%= user != null ? user.getUsername() : "" %>" required>
     </div>
     <div class="form-group">
       <label for="firstName">First Name</label>
-      <input type="text" class="form-control" id="firstName" name="firstName" value="<%= ((User) request.getAttribute("user")).getFirstName() %>" required>
+      <input type="text" class="form-control" id="firstName" name="firstName" value="<%= user != null ? user.getFirstName() : "" %>" required>
     </div>
     <div class="form-group">
       <label for="lastName">Last Name</label>
-      <input type="text" class="form-control" id="lastName" name="lastName" value="<%= ((User) request.getAttribute("user")).getLastName() %>" required>
+      <input type="text" class="form-control" id="lastName" name="lastName" value="<%= user != null ? user.getLastName() : "" %>" required>
     </div>
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" class="form-control" id="email" name="email" value="<%= ((User) request.getAttribute("user")).getEmail() %>" required>
+      <input type="email" class="form-control" id="email" name="email" value="<%= user != null ? user.getEmail() : "" %>" required>
     </div>
     <div class="form-group">
       <label for="currentPassword">Current Password</label>

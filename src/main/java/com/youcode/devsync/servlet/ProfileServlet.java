@@ -24,8 +24,7 @@ public class ProfileServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request , HttpServletResponse response) throws ServletException, IOException{
-        String username = (String) request.getSession().getAttribute("username");
-        User user = userService.findByUsername(username);
+        User user = (User) request.getSession().getAttribute("currentUser");
         request.setAttribute("user", user);
         request.getRequestDispatcher("/views/dashboard/profile.jsp").forward(request, response);
     }
@@ -50,8 +49,8 @@ public class ProfileServlet extends HttpServlet {
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
 
-        boolean isAuthenticated = userService.authenticateUser(currentUsername, currentPassword);
-        if(isAuthenticated){
+        User isAuthenticated = userService.authenticateUser(currentUsername, currentPassword);
+        if(isAuthenticated != null){
             boolean isUpdated = userService.updateUser(currentUsername, currentPassword, firstName, lastName, email);
             if(isUpdated){
                 if(!currentPassword.equals(password)){
@@ -62,27 +61,34 @@ public class ProfileServlet extends HttpServlet {
             }else{
                 response.sendRedirect(request.getContextPath() + "/profile?error=true");
             }
+        }else{
+            response.sendRedirect(request.getContextPath() + "/profile?authError=true");
         }
 
     }
 
-    private void deleteAccount(HttpServletRequest request , HttpServletResponse response) throws ServletException,IOException{
+    private void deleteAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        String currentUsername = (String) request.getSession().getAttribute("username");
-        String hashedPassword = (String) request.getSession().getAttribute("password");
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/signin");
+            return;
+        }
+
+        String currentUsername = user.getUsername();
+        String hashedPassword = user.getPassword(); // Assuming the User object has a getPassword() method
         String password = request.getParameter("currentPassword");
 
-        if(hashedPassword == null){
+        if (hashedPassword == null) {
             response.sendRedirect(request.getContextPath() + "/profile?nopassword");
             return;
         }
 
-        if(BCrypt.checkpw(password, hashedPassword)){
+        if (BCrypt.checkpw(password, hashedPassword)) {
             userService.deleteUser(currentUsername);
-            request.getSession().invalidate();
+            session.invalidate();
             response.sendRedirect(request.getContextPath() + "/signin?accountDeleted=true");
-        }else{
+        } else {
             response.sendRedirect(request.getContextPath() + "/profile?error=true");
         }
     }

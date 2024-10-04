@@ -1,5 +1,6 @@
 package com.youcode.devsync.servlet;
 
+import com.youcode.devsync.model.User;
 import com.youcode.devsync.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,18 +26,19 @@ public class SigninServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request , HttpServletResponse response) throws ServletException , IOException{
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        if (userService.authenticateUser(username, password)) {
+        User currentUser  = userService.authenticateUser(username, password);
+        if(currentUser != null){
             HttpSession session = request.getSession();
-            session.setAttribute("username", username);
-            session.setAttribute("password", userService.getHashedPassword(username)); // Set hashed password in session
+            session.setAttribute("currentUser", currentUser);
             response.sendRedirect(request.getContextPath() + "/dashboardHome");
-        } else {
+        }else{
             response.sendRedirect(request.getContextPath() + "/signin?error=true");
         }
+
     }
 
     @Override

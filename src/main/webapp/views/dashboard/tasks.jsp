@@ -119,12 +119,14 @@
     <input type="text" name="title" placeholder="Enter task title" required>
     <textarea name="description" placeholder="Enter task description" rows="4" required></textarea>
     <input type="date" name="deadline" required>
+    <c:if test="${isManager}">
     <select name="assignedTo" required>
       <option value="">Assign to</option>
       <c:forEach var="user" items="${users}">
         <option value="${user.id}">${user.firstName} ${user.lastName}</option>
         </c:forEach>
     </select>
+    </c:if>
     <button type="submit">Add Task</button>
   </form>
   <div class="task-list">

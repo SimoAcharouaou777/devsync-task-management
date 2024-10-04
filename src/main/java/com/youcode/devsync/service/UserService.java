@@ -16,9 +16,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean authenticateUser(String username, String password){
+    public User authenticateUser(String username, String password){
         User user = userRepository.findByUsername(username);
-        return user != null && BCrypt.checkpw(password, user.getPassword());
+        if (user != null && BCrypt.checkpw(password, user.getPassword())){
+            return user;
+        }
+        return null;
     }
 
     public User findByUsername(String username){
