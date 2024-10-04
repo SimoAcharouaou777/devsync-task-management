@@ -42,8 +42,8 @@
 <body>
 <div class="sidebar">
   <h2>Dashboard</h2>
-  <a href="#">Dashboard</a>
-  <a href="#">Tasks</a>
+  <a href="<%= request.getContextPath() %>/dashboardHome">Dashboard</a>
+  <a href="<%= request.getContextPath() %>/tasks">Tasks</a>
   <a href="<%= request.getContextPath() %>/profile">Profile</a>
 </div>
 <div class="container">

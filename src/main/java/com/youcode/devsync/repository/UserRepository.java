@@ -1,10 +1,14 @@
 package com.youcode.devsync.repository;
 
 import com.youcode.devsync.model.User;
+import com.youcode.devsync.model.enums.UserRole;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRepository {
     private EntityManagerFactory emf = Persistence.createEntityManagerFactory("myJPAUnit");
@@ -41,6 +45,15 @@ public class UserRepository {
         User user = query.getSingleResult();
         em.close();
         return user;
+    }
+
+    public List<User> findByRole(UserRole role){
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.userRole = :role", User.class);
+        query.setParameter("role", role);
+        List<User> users = query.getResultList();
+        em.close();
+        return users;
     }
 
     public void close(){

@@ -5,6 +5,8 @@ import com.youcode.devsync.model.enums.UserRole;
 import com.youcode.devsync.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.List;
+
 public class UserService {
     private UserRepository userRepository = new UserRepository();
 
@@ -45,6 +47,11 @@ public class UserService {
         }
         return false;
     }
+    public void addUser(User user) throws Exception{
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+    }
     public void deleteUser(String username){
         User user = userRepository.findByUsername(username);
         if(user != null){
@@ -57,6 +64,10 @@ public class UserService {
             return user.getPassword();
         }
         return null;
+    }
+
+    public List<User> getUsersByRole(UserRole role){
+        return userRepository.findByRole(role);
     }
 
     public void close(){
