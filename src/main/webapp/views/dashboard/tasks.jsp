@@ -133,10 +133,9 @@
 
       <label for="tags">Select Tags:</label>
       <select name="tags" id="tags" multiple class="form-control">
-        <option value="1">Tag 1</option>
-        <option value="2">Tag 2</option>
-        <option value="3">Tag 3</option>
-        <option value="4">Tag 4</option>
+        <c:forEach var="tag" items="${tags}">
+          <option value="${tag.id}">${tag.name}</option>
+        </c:forEach>
       </select>
 
       <button type="submit">Add Task</button>

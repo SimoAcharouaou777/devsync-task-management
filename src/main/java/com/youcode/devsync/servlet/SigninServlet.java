@@ -1,6 +1,7 @@
 package com.youcode.devsync.servlet;
 
 import com.youcode.devsync.model.User;
+import com.youcode.devsync.service.TagService;
 import com.youcode.devsync.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +15,6 @@ import java.io.IOException;
 public class SigninServlet extends HttpServlet {
 
     private UserService userService;
-
     @Override
     public void init() throws ServletException{
          userService = new UserService();
@@ -22,6 +22,7 @@ public class SigninServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         request.getRequestDispatcher("/views/signin.jsp").forward(request, response);
     }
 
