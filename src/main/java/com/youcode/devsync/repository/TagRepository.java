@@ -16,9 +16,19 @@ public class TagRepository {
         em.getTransaction().commit();
     }
 
-    public List<Tag> findAll() {
-        return em.createQuery("SELECT t FROM Tag t", Tag.class).getResultList();
+    public List<Tag> findAll(){
+        EntityManager em = emf.createEntityManager();
+        List<Tag> tags = em.createQuery("SELECT t FROM Tag t", Tag.class).getResultList();
+        em.close();
+        return tags;
     }
+
+  public Tag findById(long id){
+        EntityManager em = emf.createEntityManager();
+        Tag tag = em.find(Tag.class, id);
+        em.close();
+        return tag;
+  }
 
     public boolean isEmpty() {
         long count = em.createQuery("SELECT COUNT(t) FROM Tag t", Long.class).getSingleResult();

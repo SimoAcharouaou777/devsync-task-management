@@ -117,7 +117,7 @@
 <div class="main-content">
   <div class="container">
     <h1>Task Manager</h1>
-    <form class="task-form" action="addTask" method="post">
+    <form class="task-form" action="${pageContext.request.contextPath}/addTask" method="post">
       <input type="text" name="title" placeholder="Enter task title" required>
       <textarea name="description" placeholder="Enter task description" rows="4" required></textarea>
       <input type="date" name="deadline" required>

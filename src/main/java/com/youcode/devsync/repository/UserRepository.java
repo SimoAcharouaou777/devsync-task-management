@@ -58,6 +58,13 @@ public class UserRepository {
         return users;
     }
 
+    public User findById(long id){
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, id);
+        em.close();
+        return user;
+    }
+
     public void close(){
         if(emf != null){
             emf.close();

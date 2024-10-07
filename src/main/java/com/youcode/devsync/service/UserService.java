@@ -73,6 +73,10 @@ public class UserService {
         return userRepository.findByRole(role);
     }
 
+    public User findById(long id){
+        return userRepository.findById(id);
+    }
+
     public void close(){
         userRepository.close();
     }
