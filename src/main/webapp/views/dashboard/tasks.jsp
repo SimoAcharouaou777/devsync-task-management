@@ -117,6 +117,14 @@
 <div class="main-content">
   <div class="container">
     <h1>Task Manager</h1>
+
+    <c:if test="${not empty sessionScope.errorMessage}">
+      <div class="alert alert-danger">
+          ${sessionScope.errorMessage}
+      </div>
+      <c:remove var="errorMessage" scope="session"/>
+    </c:if>
+
     <form class="task-form" action="${pageContext.request.contextPath}/addTask" method="post">
       <input type="text" name="title" placeholder="Enter task title" required>
       <textarea name="description" placeholder="Enter task description" rows="4" required></textarea>
@@ -144,13 +152,13 @@
     <div class="task-list">
       <%-- Dynamic task list --%>
 
-        <div class="task-item">
-          <span>Task 1</span>
-          <div class="task-actions">
-            <button class="edit-btn" onclick="editTask(1)">Edit</button>
-            <button class="delete-btn" onclick="deleteTask(1)">Delete</button>
-          </div>
+      <div class="task-item">
+        <span>Task 1</span>
+        <div class="task-actions">
+          <button class="edit-btn" onclick="editTask(1)">Edit</button>
+          <button class="delete-btn" onclick="deleteTask(1)">Delete</button>
         </div>
+      </div>
 
     </div>
   </div>

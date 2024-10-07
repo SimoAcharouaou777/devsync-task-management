@@ -68,6 +68,15 @@ public class TasksServlet extends HttpServlet {
         String description = request.getParameter("description");
         Timestamp deadline = Timestamp.valueOf(request.getParameter("deadline") + " 00:00:00");
 
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Timestamp minDeadline = new Timestamp(now.getTime() + 24 * 60 * 60 * 1000);
+
+        if (deadline.before(minDeadline)){
+            session.setAttribute("errorMessage", "The deadline must be at least 4 days from now.");
+            response.sendRedirect(request.getContextPath() + "/tasks");
+            return;
+        }
+
         Task task = new Task();
         task.setTitle(title);
         task.setDescription(description);
