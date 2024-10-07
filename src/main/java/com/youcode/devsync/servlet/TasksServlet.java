@@ -129,7 +129,7 @@ public class TasksServlet extends HttpServlet {
         Timestamp deadline = Timestamp.valueOf(request.getParameter("deadline") + " 00:00:00");
 
         Task task = taskService.findById(taskId);
-        if (task == null || task.getAssignedTo() == null || !task.getAssignedTo().getId().equals(currentUser.getId())) {
+        if (task == null || (!task.getCreatedBy().getId().equals(currentUser.getId()) && !currentUser.getUserRole().equals(UserRole.MANAGER))) {
             session.setAttribute("errorMessage", "Task not found or you do not have permission to edit this task.");
             response.sendRedirect(request.getContextPath() + "/tasks");
             return;

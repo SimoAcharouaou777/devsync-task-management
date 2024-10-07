@@ -154,8 +154,10 @@
       <div class="task-item">
         <span>${task.title}</span>
         <div class="task-actions">
-          <c:if test="${task.assignedTo.id == currentUser.id}">
+          <c:if test="${task.createdBy.id == currentUser.id || (currentUser.userRole == 'MANAGER' && task.assignedTo.id == currentUser.id)}">
             <button type="button" class="edit-btn" onclick="openEditModal(${task.id}, '${task.title}', '${task.description}', '${task.deadline}', [<c:forEach var='tag' items='${task.tags}'>${tag.id},</c:forEach>])">Edit</button>
+          </c:if>
+          <c:if test="${task.createdBy.id == currentUser.id || task.assignedTo.id == currentUser.id}">
           <form action="${pageContext.request.contextPath}/deleteTask" method="post" style="display: inline;">
             <input type="hidden" name="taskId" value="${task.id}">
             <button class="delete-btn" type="submit">Delete</button>
