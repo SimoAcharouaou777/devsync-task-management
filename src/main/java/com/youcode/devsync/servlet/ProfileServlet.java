@@ -40,9 +40,10 @@ public class ProfileServlet extends HttpServlet {
           }
     }
 
-    private void updateProfile(HttpServletRequest request , HttpServletResponse response) throws ServletException,IOException{
-        String currentUsername = (String) request.getSession().getAttribute("username");
-        String password = (String) request.getSession().getAttribute("password");
+    private void updateProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        String currentUsername = (String) session.getAttribute("username");
+        String password = (String) session.getAttribute("password");
         String newUsername = request.getParameter("username");
         String currentPassword = request.getParameter("currentPassword");
         String firstName = request.getParameter("firstName");
@@ -50,21 +51,23 @@ public class ProfileServlet extends HttpServlet {
         String email = request.getParameter("email");
 
         User isAuthenticated = userService.authenticateUser(currentUsername, currentPassword);
-        if(isAuthenticated != null){
+        if (isAuthenticated != null) {
             boolean isUpdated = userService.updateUser(currentUsername, currentPassword, firstName, lastName, email);
-            if(isUpdated){
-                if(!currentPassword.equals(password)){
+            if (isUpdated) {
+                if (!currentUsername.equals(newUsername)) {
                     userService.updateUsername(currentUsername, newUsername);
-                    request.getSession().setAttribute("username", newUsername);
+                    session.setAttribute("username", newUsername);
                 }
+                // Update the currentUser attribute in the session with the new user information
+                User updatedUser = userService.findByUsername(newUsername);
+                session.setAttribute("currentUser", updatedUser);
                 response.sendRedirect(request.getContextPath() + "/profile");
-            }else{
+            } else {
                 response.sendRedirect(request.getContextPath() + "/profile?error=true");
             }
-        }else{
+        } else {
             response.sendRedirect(request.getContextPath() + "/profile?authError=true");
         }
-
     }
 
     private void deleteAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

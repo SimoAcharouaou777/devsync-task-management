@@ -35,6 +35,8 @@ public class SigninServlet extends HttpServlet {
         if(currentUser != null){
             HttpSession session = request.getSession();
             session.setAttribute("currentUser", currentUser);
+            session.setAttribute("username", username);
+            session.setAttribute("password", password);
             response.sendRedirect(request.getContextPath() + "/dashboardHome");
         }else{
             response.sendRedirect(request.getContextPath() + "/signin?error=true");
