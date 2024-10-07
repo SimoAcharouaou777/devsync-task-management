@@ -25,6 +25,14 @@ public class TaskService {
         return tasks;
     }
 
+    public List<Task> getTasksByCreatorId(long userId){
+        List<Task> tasks = taskRepository.getTasksByCreatorId(userId);
+        for(Task task : tasks){
+            task.getTags().size();
+        }
+        return tasks;
+    }
+
     public void deleteTask(long taskId){
         taskRepository.delete(taskId);
     }

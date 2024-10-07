@@ -46,6 +46,7 @@
       background-color: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+      margin-bottom: 30px;
     }
     h1 {
       color: #333;
@@ -81,6 +82,7 @@
       border-radius: 8px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
     .task-actions button {
       margin-left: 10px;
@@ -150,25 +152,26 @@
     </form>
 
     <div class="task-list">
-      <c:forEach var="task" items="${tasks}">
+  <c:forEach var="task" items="${tasks}">
+    <c:if test="${currentUser.userRole == 'MANAGER' && task.createdBy.id == currentUser.id || currentUser.userRole == 'USER' && (task.createdBy.id == currentUser.id || task.assignedTo.id == currentUser.id)}">
       <div class="task-item">
         <div>
           <span><strong>Title : </strong>${task.title}</span><br>
           <span><strong>Description : </strong>${task.description}</span><br>
           <c:if test="${task.createdBy.id != task.assignedTo.id}">
-            <span><strong>Assigned by : </strong>${task.createdBy.firstName} ${task.createdBy.lastName}</span><br>
+            <span><strong>Assigned to : </strong>${task.assignedTo.firstName} ${task.assignedTo.lastName}</span><br>
           </c:if>
           <span><strong>Status : </strong>${task.status}</span><br>
-          <c:if test="${task.createdBy.id == currentUser.id || task.assignedTo.id == currentUser.id}">
+          <c:if test="${task.assignedTo.id == currentUser.id}">
             <form action="${pageContext.request.contextPath}/updateTaskStatus" method="post" style="display: inline;">
               <input type="hidden" name="taskId" value="${task.id}">
-              <select name="status">
+              <select name="status" class="form-control">
                 <option value="PENDING" ${task.status == 'PENDING' ? 'selected' : ''}>Pending</option>
                 <option value="TO_DO" ${task.status == 'TO_DO' ? 'selected' : ''}>To Do</option>
                 <option value="DOING" ${task.status == 'DOING' ? 'selected' : ''}>Doing</option>
                 <option value="DONE" ${task.status == 'DONE' ? 'selected' : ''}>Done</option>
               </select>
-              <button type="submit" class="btn btn-primary">Update Status</button>
+              <button type="submit" class="btn btn-primary mt-2">Update Status</button>
             </form>
           </c:if>
         </div>
@@ -177,15 +180,16 @@
             <button type="button" class="edit-btn" onclick="openEditModal(${task.id}, '${task.title}', '${task.description}', '${task.deadline}', [<c:forEach var='tag' items='${task.tags}'>${tag.id},</c:forEach>])">Edit</button>
           </c:if>
           <c:if test="${task.createdBy.id == currentUser.id || task.assignedTo.id == currentUser.id}">
-          <form action="${pageContext.request.contextPath}/deleteTask" method="post" style="display: inline;">
-            <input type="hidden" name="taskId" value="${task.id}">
-            <button class="delete-btn" type="submit">Delete</button>
-          </form>
+            <form action="${pageContext.request.contextPath}/deleteTask" method="post" style="display: inline;">
+              <input type="hidden" name="taskId" value="${task.id}">
+              <button class="delete-btn" type="submit">Delete</button>
+            </form>
           </c:if>
         </div>
       </div>
-        </c:forEach>
-    </div>
+    </c:if>
+  </c:forEach>
+</div>
   </div>
 </div>
 

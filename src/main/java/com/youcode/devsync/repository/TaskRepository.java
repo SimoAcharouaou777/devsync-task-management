@@ -25,7 +25,16 @@ public class TaskRepository {
 
     public List<Task> getTasksById(long userId){
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Task> query = em.createQuery("SELECT t FROM Task t WHERE t.assignedTo.id = :userId", Task.class);
+        TypedQuery<Task> query = em.createQuery("SELECT t FROM Task t WHERE t.assignedTo.id = :userId OR t.createdBy.id = :userId", Task.class);
+        query.setParameter("userId", userId);
+        List<Task> tasks = query.getResultList();
+        em.close();
+        return tasks;
+    }
+
+    public List<Task> getTasksByCreatorId(long userId){
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Task> query = em.createQuery("SELECT t FROM Task t WHERE t.createdBy.id = :userId", Task.class);
         query.setParameter("userId", userId);
         List<Task> tasks = query.getResultList();
         em.close();

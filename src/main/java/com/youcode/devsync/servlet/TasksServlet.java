@@ -48,7 +48,12 @@ public class TasksServlet extends HttpServlet {
         List<Tag> tags = tagService.getAllTags();
         request.setAttribute("tags", tags);
 
-        List<Task> tasks = taskService.getTasksById(currentUser.getId());
+        List<Task> tasks;
+        if(isManager){
+            tasks = taskService.getTasksByCreatorId(currentUser.getId());
+        }else{
+            tasks = taskService.getTasksById(currentUser.getId());
+        }
         request.setAttribute("tasks", tasks);
 
         request.getRequestDispatcher("/views/dashboard/tasks.jsp").forward(request, response);
