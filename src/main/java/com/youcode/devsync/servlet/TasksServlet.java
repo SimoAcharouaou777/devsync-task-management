@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask"})
+@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask","/updateTaskStatus"})
 public class TasksServlet extends HttpServlet {
 
     private UserService userService;
@@ -64,6 +64,8 @@ public class TasksServlet extends HttpServlet {
             deleteTask(request, response);
         } else if ("/editTask".equals(action)) {
             editTask(request, response);
+        } else if ("/updateTaskStatus".equals(action)) {
+            updateTaskStatus(request, response);
         }
     }
 
@@ -150,6 +152,25 @@ public class TasksServlet extends HttpServlet {
             task.setTags(tags);
         }
 
+        taskService.updateTask(task);
+        response.sendRedirect(request.getContextPath() + "/tasks");
+    }
+
+    protected void updateTaskStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("currentUser");
+
+        long taskId = Long.parseLong(request.getParameter("taskId"));
+        String status = request.getParameter("status");
+
+        Task task = taskService.findById(taskId);
+        if (task == null || (!task.getCreatedBy().getId().equals(currentUser.getId()) && !task.getAssignedTo().getId().equals(currentUser.getId()))) {
+            session.setAttribute("errorMessage", "Task not found or you do not have permission to update this task.");
+            response.sendRedirect(request.getContextPath() + "/tasks");
+            return;
+        }
+
+        task.setStatus(status);
         taskService.updateTask(task);
         response.sendRedirect(request.getContextPath() + "/tasks");
     }

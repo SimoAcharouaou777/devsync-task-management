@@ -152,7 +152,26 @@
     <div class="task-list">
       <c:forEach var="task" items="${tasks}">
       <div class="task-item">
-        <span>${task.title}</span>
+        <div>
+          <span><strong>Title : </strong>${task.title}</span><br>
+          <span><strong>Description : </strong>${task.description}</span><br>
+          <c:if test="${task.createdBy.id != task.assignedTo.id}">
+            <span><strong>Assigned by : </strong>${task.createdBy.firstName} ${task.createdBy.lastName}</span><br>
+          </c:if>
+          <span><strong>Status : </strong>${task.status}</span><br>
+          <c:if test="${task.createdBy.id == currentUser.id || task.assignedTo.id == currentUser.id}">
+            <form action="${pageContext.request.contextPath}/updateTaskStatus" method="post" style="display: inline;">
+              <input type="hidden" name="taskId" value="${task.id}">
+              <select name="status">
+                <option value="PENDING" ${task.status == 'PENDING' ? 'selected' : ''}>Pending</option>
+                <option value="TO_DO" ${task.status == 'TO_DO' ? 'selected' : ''}>To Do</option>
+                <option value="DOING" ${task.status == 'DOING' ? 'selected' : ''}>Doing</option>
+                <option value="DONE" ${task.status == 'DONE' ? 'selected' : ''}>Done</option>
+              </select>
+              <button type="submit" class="btn btn-primary">Update Status</button>
+            </form>
+          </c:if>
+        </div>
         <div class="task-actions">
           <c:if test="${task.createdBy.id == currentUser.id || (currentUser.userRole == 'MANAGER' && task.assignedTo.id == currentUser.id)}">
             <button type="button" class="edit-btn" onclick="openEditModal(${task.id}, '${task.title}', '${task.description}', '${task.deadline}', [<c:forEach var='tag' items='${task.tags}'>${tag.id},</c:forEach>])">Edit</button>
