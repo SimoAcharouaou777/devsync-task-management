@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask"})
+@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask"})
 public class TasksServlet extends HttpServlet {
 
     private UserService userService;
@@ -48,6 +48,9 @@ public class TasksServlet extends HttpServlet {
         List<Tag> tags = tagService.getAllTags();
         request.setAttribute("tags", tags);
 
+        List<Task> tasks = taskService.getTasksById(currentUser.getId());
+        request.setAttribute("tasks", tasks);
+
         request.getRequestDispatcher("/views/dashboard/tasks.jsp").forward(request, response);
     }
 
@@ -57,6 +60,10 @@ public class TasksServlet extends HttpServlet {
 
         if ("/addTask".equals(action)) {
             addTask(request, response);
+        } else if ("/deleteTask".equals(action)) {
+            deleteTask(request, response);
+        } else if ("/editTask".equals(action)) {
+            editTask(request, response);
         }
     }
 
@@ -103,6 +110,47 @@ public class TasksServlet extends HttpServlet {
         }
 
         taskService.addTask(task);
+        response.sendRedirect(request.getContextPath() + "/tasks");
+    }
+
+    private void deleteTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        long taskId = Long.parseLong(request.getParameter("taskId"));
+        taskService.deleteTask(taskId);
+        response.sendRedirect(request.getContextPath() + "/tasks");
+    }
+
+    private void editTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("currentUser");
+
+        long taskId = Long.parseLong(request.getParameter("taskId"));
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        Timestamp deadline = Timestamp.valueOf(request.getParameter("deadline") + " 00:00:00");
+
+        Task task = taskService.findById(taskId);
+        if (task == null || task.getAssignedTo() == null || !task.getAssignedTo().getId().equals(currentUser.getId())) {
+            session.setAttribute("errorMessage", "Task not found or you do not have permission to edit this task.");
+            response.sendRedirect(request.getContextPath() + "/tasks");
+            return;
+        }
+
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setDeadline(deadline);
+        task.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        String[] tagIds = request.getParameterValues("tags");
+        if (tagIds != null) {
+            Set<Tag> tags = new HashSet<>();
+            for (String tagId : tagIds) {
+                Tag tag = tagService.findById(Long.parseLong(tagId));
+                tags.add(tag);
+            }
+            task.setTags(tags);
+        }
+
+        taskService.updateTask(task);
         response.sendRedirect(request.getContextPath() + "/tasks");
     }
 }

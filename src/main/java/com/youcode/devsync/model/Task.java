@@ -20,7 +20,7 @@ public class Task {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assigned_to", referencedColumnName = "id")
     @OnDelete(action =  OnDeleteAction.SET_NULL)
     private User assignedTo;
@@ -42,7 +42,7 @@ public class Task {
     @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "task_tags",
             joinColumns = @JoinColumn(name = "task_id"),
