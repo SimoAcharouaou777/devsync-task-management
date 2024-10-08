@@ -45,6 +45,7 @@
     <a href="<%= request.getContextPath() %>/dashboardHome">Dashboard</a>
     <a href="<%= request.getContextPath() %>/tasks">Tasks</a>
     <a href="<%= request.getContextPath() %>/profile">Profile</a>
+    <a href="<%= request.getContextPath() %>/managerChangeRequests">Change Requests</a>
 </div>
 <div class="content">
     <h1>Welcome to the Dashboard</h1>

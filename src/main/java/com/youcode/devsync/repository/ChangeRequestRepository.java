@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ChangeRequestRepository {
@@ -42,6 +43,68 @@ public class ChangeRequestRepository {
             }
             throw e;
         }finally {
+            em.close();
+        }
+    }
+
+    public List<ChangeRequest> findAll(){
+        EntityManager em = emf.createEntityManager();
+        try{
+            return em.createQuery("SELECT cr FROM ChangeRequest cr", ChangeRequest.class).getResultList();
+        }finally {
+            em.close();
+        }
+    }
+
+    public List<ChangeRequest> findByManager(long managerId){
+        EntityManager em = emf.createEntityManager();
+        try{
+            String query = "SELECT cr FROM ChangeRequest cr WHERE cr.task.createdBy.id = :managerId";
+            return em.createQuery(query, ChangeRequest.class)
+                    .setParameter("managerId", managerId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public void reassignTask(long changeRequestId, long newAssigneeId) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            ChangeRequest changeRequest = em.find(ChangeRequest.class, changeRequestId);
+            Task task = changeRequest.getTask();
+            User newAssignee = em.find(User.class, newAssigneeId);
+
+            task.setAssignedTo(newAssignee);
+            em.merge(task);
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void deleteChangeRequest(long changeRequestId) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            ChangeRequest changeRequest = em.find(ChangeRequest.class, changeRequestId);
+            if (changeRequest != null) {
+                em.remove(changeRequest);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
             em.close();
         }
     }

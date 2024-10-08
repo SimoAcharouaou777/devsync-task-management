@@ -102,4 +102,20 @@ public class UserService {
     public void addChangeRequest(ChangeRequest changeRequest){
         changeRequestRepository.save(changeRequest);
     }
+
+    public List<ChangeRequest> getAllChangeRequests(){
+        return changeRequestRepository.findAll();
+    }
+
+    public List<ChangeRequest> getAllByManager(long managerId){
+        return changeRequestRepository.findByManager(managerId);
+    }
+
+    public void reassignTask(long changeRequestId, long newAssigneeId) {
+        changeRequestRepository.reassignTask(changeRequestId, newAssigneeId);
+    }
+
+    public void deleteChangeRequest(long changeRequestId){
+        changeRequestRepository.deleteChangeRequest(changeRequestId);
+    }
 }
