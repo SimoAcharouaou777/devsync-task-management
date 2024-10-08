@@ -3,6 +3,7 @@ package com.youcode.devsync.model;
 import com.youcode.devsync.model.enums.UserRole;
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
@@ -38,6 +39,9 @@ public class User {
 
     @Column(name = "tickets")
     private Integer tickets;
+
+    @Column(name = "last_assigned_task_deleted_at")
+    private Timestamp lastAssignedTaskDeletedAt;
 
     @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChangeRequest> changeRequestMade;
@@ -136,5 +140,11 @@ public class User {
     }
     public void setTickets(int tickets) {
         this.tickets = tickets;
+    }
+    public Timestamp getLastAssignedTaskDeletedAt() {
+        return lastAssignedTaskDeletedAt;
+    }
+    public void setLastAssignedTaskDeletedAt(Timestamp lastAssignedTaskDeletedAt) {
+        this.lastAssignedTaskDeletedAt = lastAssignedTaskDeletedAt;
     }
 }

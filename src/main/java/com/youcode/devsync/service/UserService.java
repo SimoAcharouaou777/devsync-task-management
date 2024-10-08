@@ -9,6 +9,9 @@ import com.youcode.devsync.repository.TaskRepository;
 import com.youcode.devsync.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,5 +131,20 @@ public class UserService {
     public Task findTaskByChangeRequestId(long changeRequestId){
         ChangeRequest changeRequest = changeRequestRepository.findById(changeRequestId);
         return changeRequest != null ? changeRequest.getTask() : null;
+    }
+
+    public boolean canDeleteAssignedTask(User user) {
+        Timestamp lastDeletedAt = user.getLastAssignedTaskDeletedAt();
+        if (lastDeletedAt == null) {
+            return true;
+        }
+        LocalDateTime lastDeletedDateTime = lastDeletedAt.toLocalDateTime();
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minus(1, ChronoUnit.MONTHS);
+        return lastDeletedDateTime.isBefore(oneMonthAgo);
+    }
+
+    public void updateLastAssignedTaskDeletedAt(User user) {
+        user.setLastAssignedTaskDeletedAt(Timestamp.valueOf(LocalDateTime.now()));
+        userRepository.update(user);
     }
 }

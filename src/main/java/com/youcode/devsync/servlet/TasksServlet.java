@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask","/updateTaskStatus","/sendChangeRequest"})
+@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask","/updateTaskStatus","/sendChangeRequest","/deleteAssignedTask"})
 public class TasksServlet extends HttpServlet {
 
     private UserService userService;
@@ -74,6 +74,8 @@ public class TasksServlet extends HttpServlet {
             updateTaskStatus(request, response);
         } else if ("/sendChangeRequest".equals(action)) {
             sendChangeRequest(request, response);
+        } else if ("/deleteAssignedTask".equals(action)) {
+            deleteAssignedTask(request, response);
         }
     }
 
@@ -215,6 +217,25 @@ public class TasksServlet extends HttpServlet {
         changeRequest.setManager(task.getCreatedBy());
         userService.addChangeRequest(changeRequest);
 
+        response.sendRedirect(request.getContextPath() + "/tasks");
+    }
+
+    private void deleteAssignedTask(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
+        long taskId = Long.parseLong(request.getParameter("taskId"));
+        User currentUser = (User) session.getAttribute("currentUser");
+
+        try {
+            if (userService.canDeleteAssignedTask(currentUser)) {
+                taskService.deleteTask(taskId);
+                userService.updateLastAssignedTaskDeletedAt(currentUser);
+                session.setAttribute("successMessage", "Assigned task deleted successfully.");
+            } else {
+                session.setAttribute("errorMessage", "You can only delete one assigned task per month.");
+            }
+        } catch (Exception e) {
+            session.setAttribute("errorMessage", "Failed to delete assigned task: " + e.getMessage());
+        }
         response.sendRedirect(request.getContextPath() + "/tasks");
     }
 }
