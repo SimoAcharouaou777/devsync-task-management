@@ -1,5 +1,6 @@
 package com.youcode.devsync.servlet;
 
+import com.youcode.devsync.model.ChangeRequest;
 import com.youcode.devsync.model.Tag;
 import com.youcode.devsync.model.Task;
 import com.youcode.devsync.model.User;
@@ -20,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask","/updateTaskStatus"})
+@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask","/updateTaskStatus","/sendChangeRequest"})
 public class TasksServlet extends HttpServlet {
 
     private UserService userService;
@@ -71,6 +72,8 @@ public class TasksServlet extends HttpServlet {
             editTask(request, response);
         } else if ("/updateTaskStatus".equals(action)) {
             updateTaskStatus(request, response);
+        } else if ("/sendChangeRequest".equals(action)) {
+            sendChangeRequest(request, response);
         }
     }
 
@@ -177,6 +180,41 @@ public class TasksServlet extends HttpServlet {
 
         task.setStatus(status);
         taskService.updateTask(task);
+        response.sendRedirect(request.getContextPath() + "/tasks");
+    }
+
+    private void sendChangeRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("currentUser");
+        long taskId = Long.parseLong(request.getParameter("taskId"));
+        Task task = taskService.findById(taskId);
+
+        if(task == null){
+            session.setAttribute("errorMessage", "Task not found.");
+            response.sendRedirect(request.getContextPath() + "/tasks");
+            return;
+        }
+
+        if(userService.hasChangeRequest(task, currentUser)){
+            session.setAttribute("errorMessage", "You have already sent a change request for this task.");
+            response.sendRedirect(request.getContextPath() + "/tasks");
+            return;
+        }
+
+        if(currentUser.getTickets() <= 0){
+            session.setAttribute("errorMessage", "You do not have enough tickets to make your request.");
+            response.sendRedirect(request.getContextPath() + "/tasks");
+            return;
+        }
+        currentUser.setTickets(currentUser.getTickets() - 1);
+        userService.updateUserTickets(currentUser);
+
+        ChangeRequest changeRequest = new ChangeRequest();
+        changeRequest.setTask(task);
+        changeRequest.setRequester(currentUser);
+        changeRequest.setManager(task.getCreatedBy());
+        userService.addChangeRequest(changeRequest);
+
         response.sendRedirect(request.getContextPath() + "/tasks");
     }
 }

@@ -3,6 +3,8 @@ package com.youcode.devsync.model;
 import com.youcode.devsync.model.enums.UserRole;
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -33,6 +35,25 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "manager_id")
     private User manager;
+
+    @Column(name = "tickets")
+    private Integer tickets;
+
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChangeRequest> changeRequestMade;
+
+    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChangeRequest> changeRequestManaged;
+
+    @PrePersist
+    @PreUpdate
+    private void setDefaultTickets(){
+        if(this.userRole == UserRole.MANAGER){
+            this.tickets = null;
+        } else if (this.tickets == null) {
+            this.tickets = 2;
+        }
+    }
 
     public User() {
     }
@@ -108,5 +129,12 @@ public class User {
 
     public void setManager(User manager) {
         this.manager = manager;
+    }
+
+    public int getTickets() {
+        return tickets;
+    }
+    public void setTickets(int tickets) {
+        this.tickets = tickets;
     }
 }

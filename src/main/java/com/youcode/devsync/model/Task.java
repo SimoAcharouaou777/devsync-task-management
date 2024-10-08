@@ -50,6 +50,9 @@ public class Task {
     )
     private Set<Tag> tags;
 
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChangeRequest> changeRequests;
+
     // Getters and Setters
     public long getId() {
         return id;

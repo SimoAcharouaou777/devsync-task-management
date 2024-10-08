@@ -158,8 +158,9 @@
         <div>
           <span><strong>Title : </strong>${task.title}</span><br>
           <span><strong>Description : </strong>${task.description}</span><br>
+          <span><strong>Deadline : </strong>${task.deadline}</span><br>
           <c:if test="${task.createdBy.id != task.assignedTo.id}">
-            <span><strong>Assigned to : </strong>${task.assignedTo.firstName} ${task.assignedTo.lastName}</span><br>
+            <span><strong>Assigned By : </strong>${task.createdBy.firstName} ${task.createdBy.lastName}</span><br>
           </c:if>
           <span><strong>Status : </strong>${task.status}</span><br>
           <c:if test="${task.assignedTo.id == currentUser.id}">
@@ -184,6 +185,12 @@
               <input type="hidden" name="taskId" value="${task.id}">
               <button class="delete-btn" type="submit">Delete</button>
             </form>
+          </c:if>
+          <c:if test="${task.assignedTo.id == currentUser.id && task.createdBy.id != currentUser.id}">
+              <form action="${pageContext.request.contextPath}/sendChangeRequest" method="post" style="display: inline;">
+                <input type="hidden" name="taskId" value="${task.id}">
+                <button class="btn btn-warning" type="submit">Send Change Request</button>
+              </form>
           </c:if>
         </div>
       </div>
