@@ -74,4 +74,24 @@ public class TaskRepository {
         em.close();
         return task;
     }
+
+    public void updateTaskCanBeReassigned(long taskId, boolean canBeReassigned) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Task task = em.find(Task.class, taskId);
+            if (task != null) {
+                task.setCanBeReassigned(canBeReassigned);
+                em.merge(task);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }

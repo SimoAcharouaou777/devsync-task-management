@@ -1,6 +1,7 @@
 package com.youcode.devsync.servlet;
 
 import com.youcode.devsync.model.ChangeRequest;
+import com.youcode.devsync.model.Task;
 import com.youcode.devsync.model.User;
 import com.youcode.devsync.model.enums.UserRole;
 import com.youcode.devsync.service.UserService;
@@ -67,6 +68,8 @@ public class ManagerChangeRequestServlet extends HttpServlet {
 
         try {
             userService.reassignTask(changeRequestId, newAssigneeId);
+            Task task = userService.findTaskByChangeRequestId(changeRequestId); // Fetch the task associated with the change request
+            userService.updateTaskCanBeReassigned(task.getId(), false); // Update the flag
             userService.deleteChangeRequest(changeRequestId);
             session.setAttribute("successMessage", "Task reassigned successfully.");
         } catch (Exception e) {

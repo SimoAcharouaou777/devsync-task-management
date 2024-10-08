@@ -187,11 +187,11 @@
               <button class="delete-btn" type="submit">Delete</button>
             </form>
           </c:if>
-          <c:if test="${task.assignedTo.id == currentUser.id && task.createdBy.id != currentUser.id}">
-              <form action="${pageContext.request.contextPath}/sendChangeRequest" method="post" style="display: inline;">
-                <input type="hidden" name="taskId" value="${task.id}">
-                <button class="btn btn-warning" type="submit">Send Change Request</button>
-              </form>
+          <c:if test="${task.assignedTo.id == currentUser.id && task.createdBy.id != currentUser.id && task.canBeReassigned}">
+            <form action="${pageContext.request.contextPath}/sendChangeRequest" method="post" style="display: inline;">
+              <input type="hidden" name="taskId" value="${task.id}">
+              <button class="btn btn-warning" type="submit">Send Change Request</button>
+            </form>
           </c:if>
         </div>
       </div>

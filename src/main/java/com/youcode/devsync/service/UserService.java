@@ -5,6 +5,7 @@ import com.youcode.devsync.model.Task;
 import com.youcode.devsync.model.User;
 import com.youcode.devsync.model.enums.UserRole;
 import com.youcode.devsync.repository.ChangeRequestRepository;
+import com.youcode.devsync.repository.TaskRepository;
 import com.youcode.devsync.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class UserService {
     private UserRepository userRepository = new UserRepository();
     private ChangeRequestRepository changeRequestRepository = new ChangeRequestRepository();
+    private TaskRepository taskRepository = new TaskRepository();
 
     public void registerUser(String username, String password, String firstName, String lastName, String email){
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
@@ -117,5 +119,14 @@ public class UserService {
 
     public void deleteChangeRequest(long changeRequestId){
         changeRequestRepository.deleteChangeRequest(changeRequestId);
+    }
+
+    public void updateTaskCanBeReassigned(long taskId, boolean canBeReassigned){
+        taskRepository.updateTaskCanBeReassigned(taskId, canBeReassigned);
+    }
+
+    public Task findTaskByChangeRequestId(long changeRequestId){
+        ChangeRequest changeRequest = changeRequestRepository.findById(changeRequestId);
+        return changeRequest != null ? changeRequest.getTask() : null;
     }
 }

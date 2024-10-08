@@ -108,4 +108,13 @@ public class ChangeRequestRepository {
             em.close();
         }
     }
+
+    public ChangeRequest findById(long id){
+        EntityManager em = emf.createEntityManager();
+        try{
+            return em.find(ChangeRequest.class, id);
+        }finally {
+            em.close();
+        }
+    }
 }

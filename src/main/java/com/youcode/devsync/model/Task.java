@@ -42,6 +42,9 @@ public class Task {
     @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
 
+    @Column(name = "canBeReassigned", nullable = false)
+    private boolean canBeReassigned = true;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "task_tags",
@@ -132,5 +135,12 @@ public class Task {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public boolean isCanBeReassigned() {
+        return canBeReassigned;
+    }
+    public void setCanBeReassigned(boolean canBeReassigned) {
+        this.canBeReassigned = canBeReassigned;
     }
 }
