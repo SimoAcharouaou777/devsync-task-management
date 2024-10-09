@@ -20,27 +20,27 @@ public class UserService {
     private ChangeRequestRepository changeRequestRepository = new ChangeRequestRepository();
     private TaskRepository taskRepository = new TaskRepository();
 
-    public void registerUser(String username, String password, String firstName, String lastName, String email){
+    public void registerUser(String username, String password, String firstName, String lastName, String email) {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         User user = new User(username, hashedPassword, firstName, lastName, email, UserRole.USER);
         userRepository.save(user);
     }
 
-    public User authenticateUser(String username, String password){
+    public User authenticateUser(String username, String password) {
         User user = userRepository.findByUsername(username);
-        if (user != null && BCrypt.checkpw(password, user.getPassword())){
+        if (user != null && BCrypt.checkpw(password, user.getPassword())) {
             return user;
         }
         return null;
     }
 
-    public User findByUsername(String username){
+    public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    public boolean updateUser(String username, String password, String firstName, String lastName, String email){
+    public boolean updateUser(String username, String password, String firstName, String lastName, String email) {
         User user = userRepository.findByUsername(username);
-        if(user != null){
+        if (user != null) {
             user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
             user.setFirstName(firstName);
             user.setLastName(lastName);
@@ -51,68 +51,71 @@ public class UserService {
         return false;
     }
 
-    public boolean updateUsername(String currentUsername, String newUsername){
+    public boolean updateUsername(String currentUsername, String newUsername) {
         User user = userRepository.findByUsername(currentUsername);
-        if(user != null){
+        if (user != null) {
             user.setUsername(newUsername);
             userRepository.update(user);
             return true;
         }
         return false;
     }
-    public void addUser(User user) throws Exception{
+
+    public void addUser(User user) throws Exception {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
         userRepository.save(user);
     }
-    public void deleteUser(String username){
+
+    public void deleteUser(String username) {
         User user = userRepository.findByUsername(username);
-        if(user != null){
+        if (user != null) {
             userRepository.delete(user);
         }
     }
-    public String getHashedPassword(String username){
+
+    public String getHashedPassword(String username) {
         User user = userRepository.findByUsername(username);
-        if(user != null){
+        if (user != null) {
             return user.getPassword();
         }
         return null;
     }
 
-    public List<User> getUsersByRole(UserRole role){
+    public List<User> getUsersByRole(UserRole role) {
         return userRepository.findByRole(role);
     }
 
-    public User findById(long id){
+    public User findById(long id) {
         return userRepository.findById(id);
     }
 
-    public void close(){
+    public void close() {
         userRepository.close();
     }
 
-    public void updateUserTickets(User user){
+    public void updateUserTickets(User user) {
         User existingUser = userRepository.findById(user.getId());
-        if(existingUser != null){
+        if (existingUser != null) {
             existingUser.setTickets(user.getTickets());
             userRepository.update(existingUser);
         }
     }
 
-    public boolean hasChangeRequest(Task task , User requester){
+    public boolean hasChangeRequest(Task task, User requester) {
         Optional<ChangeRequest> changeRequest = changeRequestRepository.findByTaskAndRequester(task, requester);
         return changeRequest.isPresent();
     }
 
-    public void addChangeRequest(ChangeRequest changeRequest){
+    public void addChangeRequest(ChangeRequest changeRequest) {
         changeRequestRepository.save(changeRequest);
     }
 
-    public List<ChangeRequest> getAllChangeRequests(){
+    public List<ChangeRequest> getAllChangeRequests() {
         return changeRequestRepository.findAll();
     }
 
-    public List<ChangeRequest> getAllByManager(long managerId){
+    public List<ChangeRequest> getAllByManager(long managerId) {
         return changeRequestRepository.findByManager(managerId);
     }
 
@@ -120,15 +123,15 @@ public class UserService {
         changeRequestRepository.reassignTask(changeRequestId, newAssigneeId);
     }
 
-    public void deleteChangeRequest(long changeRequestId){
+    public void deleteChangeRequest(long changeRequestId) {
         changeRequestRepository.deleteChangeRequest(changeRequestId);
     }
 
-    public void updateTaskCanBeReassigned(long taskId, boolean canBeReassigned){
+    public void updateTaskCanBeReassigned(long taskId, boolean canBeReassigned) {
         taskRepository.updateTaskCanBeReassigned(taskId, canBeReassigned);
     }
 
-    public Task findTaskByChangeRequestId(long changeRequestId){
+    public Task findTaskByChangeRequestId(long changeRequestId) {
         ChangeRequest changeRequest = changeRequestRepository.findById(changeRequestId);
         return changeRequest != null ? changeRequest.getTask() : null;
     }
@@ -146,5 +149,10 @@ public class UserService {
     public void updateLastAssignedTaskDeletedAt(User user) {
         user.setLastAssignedTaskDeletedAt(Timestamp.valueOf(LocalDateTime.now()));
         userRepository.update(user);
+    }
+
+    public boolean isTaskReassigned(long taskId) {
+        Task task = taskRepository.findById(taskId);
+        return task != null && !task.isCanBeReassigned();
     }
 }

@@ -3,6 +3,8 @@ package com.youcode.devsync.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "change_requests")
 public class ChangeRequest {
@@ -22,6 +24,10 @@ public class ChangeRequest {
     @ManyToOne
     @JoinColumn(name = "manager_id", nullable = false)
     private User manager;
+
+    @Column(name = "request_date", nullable = false)
+    private Timestamp requestDate;
+
 
     // Getters and Setters
 
@@ -48,5 +54,11 @@ public class ChangeRequest {
     }
     public void setManager(User manager) {
         this.manager = manager;
+    }
+    public Timestamp getRequestDate() {
+        return requestDate;
+    }
+    public void setRequestDate(Timestamp requestDate) {
+        this.requestDate = requestDate;
     }
 }

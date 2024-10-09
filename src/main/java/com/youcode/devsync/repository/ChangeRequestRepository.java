@@ -12,10 +12,9 @@ import java.util.Optional;
 
 public class ChangeRequestRepository {
 
-    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("myJPAUnit");
-    private EntityManager em = emf.createEntityManager();
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("myJPAUnit");
 
-    public Optional<ChangeRequest> findByTaskAndRequester(Task task, User requester){
+    public Optional<ChangeRequest> findByTaskAndRequester(Task task, User requester) {
         EntityManager em = emf.createEntityManager();
         String query = "SELECT cr FROM ChangeRequest cr WHERE cr.task = :task AND cr.requester = :requester";
         try {
@@ -24,41 +23,41 @@ public class ChangeRequestRepository {
                     .setParameter("requester", requester)
                     .getSingleResult();
             return Optional.of(changeRequest);
-        } catch (Exception e){
+        } catch (Exception e) {
             return Optional.empty();
-        }finally {
+        } finally {
             em.close();
         }
     }
 
-    public void save(ChangeRequest changeRequest){
+    public void save(ChangeRequest changeRequest) {
         EntityManager em = emf.createEntityManager();
-        try{
+        try {
             em.getTransaction().begin();
             em.persist(changeRequest);
             em.getTransaction().commit();
-        }catch (Exception e){
-            if(em.getTransaction().isActive()){
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
             throw e;
-        }finally {
+        } finally {
             em.close();
         }
     }
 
-    public List<ChangeRequest> findAll(){
+    public List<ChangeRequest> findAll() {
         EntityManager em = emf.createEntityManager();
-        try{
+        try {
             return em.createQuery("SELECT cr FROM ChangeRequest cr", ChangeRequest.class).getResultList();
-        }finally {
+        } finally {
             em.close();
         }
     }
 
-    public List<ChangeRequest> findByManager(long managerId){
+    public List<ChangeRequest> findByManager(long managerId) {
         EntityManager em = emf.createEntityManager();
-        try{
+        try {
             String query = "SELECT cr FROM ChangeRequest cr WHERE cr.task.createdBy.id = :managerId";
             return em.createQuery(query, ChangeRequest.class)
                     .setParameter("managerId", managerId)
@@ -109,12 +108,18 @@ public class ChangeRequestRepository {
         }
     }
 
-    public ChangeRequest findById(long id){
+    public ChangeRequest findById(long id) {
         EntityManager em = emf.createEntityManager();
-        try{
+        try {
             return em.find(ChangeRequest.class, id);
-        }finally {
+        } finally {
             em.close();
+        }
+    }
+
+    public static void close() {
+        if (emf != null) {
+            emf.close();
         }
     }
 }

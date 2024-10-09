@@ -5,6 +5,7 @@ import com.youcode.devsync.model.Tag;
 import com.youcode.devsync.model.Task;
 import com.youcode.devsync.model.User;
 import com.youcode.devsync.model.enums.UserRole;
+import com.youcode.devsync.scheduler.ChangeRequestCheckerJob;
 import com.youcode.devsync.service.TagService;
 import com.youcode.devsync.service.TaskService;
 import com.youcode.devsync.service.UserService;
@@ -14,9 +15,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.quartz.*;
+import org.quartz.impl.StdScheduler;
+import org.quartz.impl.StdSchedulerFactory;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,13 +32,40 @@ public class TasksServlet extends HttpServlet {
     private UserService userService;
     private TagService tagService;
     private TaskService taskService;
+    private Scheduler scheduler;
 
     @Override
     public void init() throws ServletException {
         userService = new UserService();
         tagService = new TagService();
         taskService = new TaskService();
+
+        try {
+            scheduler = new StdSchedulerFactory().getScheduler();
+
+            JobDetail job = JobBuilder.newJob(ChangeRequestCheckerJob.class)
+                    .withIdentity("changeRequestCheckerJob", "group1")
+                    .build();
+
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity("changeRequestCheckerTrigger", "group1")
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                            .withIntervalInMinutes(1)
+                            .repeatForever())
+                    .build();
+
+            if(!scheduler.checkExists(job.getKey())){
+                scheduler.scheduleJob(job, trigger);
+            }
+
+            scheduler.start();
+        } catch (SchedulerException e) {
+            throw new ServletException("Failed to initialize Quartz scheduler", e);
+        }
+
     }
+
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -212,23 +244,24 @@ public class TasksServlet extends HttpServlet {
         long taskId = Long.parseLong(request.getParameter("taskId"));
         Task task = taskService.findById(taskId);
 
-        if(task == null){
+        if (task == null) {
             session.setAttribute("errorMessage", "Task not found.");
             response.sendRedirect(request.getContextPath() + "/tasks");
             return;
         }
 
-        if(userService.hasChangeRequest(task, currentUser)){
+        if (userService.hasChangeRequest(task, currentUser)) {
             session.setAttribute("errorMessage", "You have already sent a change request for this task.");
             response.sendRedirect(request.getContextPath() + "/tasks");
             return;
         }
 
-        if(currentUser.getTickets() <= 0){
+        if (currentUser.getTickets() <= 0) {
             session.setAttribute("errorMessage", "You do not have enough tickets to make your request.");
             response.sendRedirect(request.getContextPath() + "/tasks");
             return;
         }
+
         currentUser.setTickets(currentUser.getTickets() - 1);
         userService.updateUserTickets(currentUser);
 
@@ -236,7 +269,13 @@ public class TasksServlet extends HttpServlet {
         changeRequest.setTask(task);
         changeRequest.setRequester(currentUser);
         changeRequest.setManager(task.getCreatedBy());
+        changeRequest.setRequestDate(new Timestamp(System.currentTimeMillis()));
+
+        System.out.println("changeRequest : "+changeRequest);
+
         userService.addChangeRequest(changeRequest);
+
+        System.out.println("changeRequest : "+changeRequest);
 
         response.sendRedirect(request.getContextPath() + "/tasks");
     }
