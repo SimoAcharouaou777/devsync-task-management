@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask","/updateTaskStatus","/sendChangeRequest","/deleteAssignedTask"})
+@WebServlet(name = "TasksServlet", urlPatterns = {"/tasks", "/addTask","/deleteTask","/editTask","/updateTaskStatus","/sendChangeRequest","/deleteAssignedTask","/overTime"})
 public class TasksServlet extends HttpServlet {
 
     private UserService userService;
@@ -41,6 +41,18 @@ public class TasksServlet extends HttpServlet {
         User currentUser = (User) session.getAttribute("currentUser");
 
         boolean isManager = currentUser.getUserRole() == UserRole.MANAGER;
+
+        if ("/overTime".equals(request.getServletPath())) {
+            List<Task> overdueTasks;
+            if (isManager) {
+                overdueTasks = taskService.getOverdueTasksByCreatorId(currentUser.getId());
+            } else {
+                overdueTasks = taskService.getOverdueTasksByAssignedToId(currentUser.getId());
+            }
+            request.setAttribute("overdueTasks", overdueTasks);
+            request.getRequestDispatcher("/views/dashboard/overTime.jsp").forward(request, response);
+            return;
+        }
 
         List<User> users = userService.getUsersByRole(UserRole.USER);
         request.setAttribute("users", users);
@@ -89,12 +101,21 @@ public class TasksServlet extends HttpServlet {
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
         Timestamp minDeadline = new Timestamp(now.getTime() + 24 * 60 * 60 * 1000);
-
-        if (deadline.before(minDeadline)){
-            session.setAttribute("errorMessage", "The deadline must be at least 4 days from now.");
-            response.sendRedirect(request.getContextPath() + "/tasks");
-            return;
+        if(currentUser.getUserRole().equals(UserRole.MANAGER)){
+            Timestamp managerMinDeadline = new Timestamp(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+            if(deadline.before(managerMinDeadline)){
+                session.setAttribute("errorMessage", "The deadline must be at least 3 days from now.");
+                response.sendRedirect(request.getContextPath() + "/tasks");
+                return;
+            }
+        }else{
+            if (deadline.before(minDeadline)){
+                session.setAttribute("errorMessage", "The deadline must be at least 1 days from now.");
+                response.sendRedirect(request.getContextPath() + "/tasks");
+                return;
+            }
         }
+
 
         Task task = new Task();
         task.setTitle(title);

@@ -45,6 +45,10 @@ public class Task {
     @Column(name = "canBeReassigned", nullable = false)
     private boolean canBeReassigned = true;
 
+    @Column(name = "overdue", nullable = false)
+    private boolean overdue = false;
+
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "task_tags",
@@ -142,5 +146,11 @@ public class Task {
     }
     public void setCanBeReassigned(boolean canBeReassigned) {
         this.canBeReassigned = canBeReassigned;
+    }
+    public boolean isOverdue() {
+        return overdue;
+    }
+    public void setOverdue(boolean overdue) {
+        this.overdue = overdue;
     }
 }

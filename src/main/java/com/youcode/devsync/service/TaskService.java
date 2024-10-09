@@ -25,6 +25,14 @@ public class TaskService {
         return tasks;
     }
 
+    public List<Task> getAllTasks(){
+        List<Task> tasks = taskRepository.getAllTasks();
+        for(Task task : tasks){
+            task.getTags().size();
+        }
+        return tasks;
+    }
+
     public List<Task> getTasksByCreatorId(long userId){
         List<Task> tasks = taskRepository.getTasksByCreatorId(userId);
         for(Task task : tasks){
@@ -43,5 +51,15 @@ public class TaskService {
 
     public Task findById(long id) {
         return taskRepository.findById(id);
+    }
+
+    public List<Task> getOverdueTasks(){
+        return taskRepository.getOverdueTasks();
+    }
+    public List<Task> getOverdueTasksByAssignedToId(long assignedToId){
+        return taskRepository.getOverdueTasksByAssignedToId(assignedToId);
+    }
+    public List<Task> getOverdueTasksByCreatorId(long creatorId){
+        return taskRepository.getOverdueTasksByCreatorId(creatorId);
     }
 }

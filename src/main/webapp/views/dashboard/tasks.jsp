@@ -115,6 +115,7 @@
   <a href="<%= request.getContextPath() %>/tasks">Tasks</a>
   <a href="<%= request.getContextPath() %>/profile">Profile</a>
   <a href="<%= request.getContextPath() %>/managerChangeRequests">Change Requests</a>
+  <a href="<%= request.getContextPath() %>/overTime">Not completed Tasks</a>
 </div>
 
 <div class="main-content">
@@ -162,6 +163,7 @@
           <span><strong>Deadline : </strong>${task.deadline}</span><br>
           <c:if test="${task.createdBy.id != task.assignedTo.id}">
             <span><strong>Assigned By : </strong>${task.createdBy.firstName} ${task.createdBy.lastName}</span><br>
+            <span><strong>Assigned To : </strong>${task.assignedTo.firstName} ${task.assignedTo.lastName}</span><br>
           </c:if>
           <span><strong>Status : </strong>${task.status}</span><br>
           <c:if test="${task.assignedTo.id == currentUser.id}">
