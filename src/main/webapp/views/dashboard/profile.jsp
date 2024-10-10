@@ -37,6 +37,18 @@
       flex: 1;
       padding: 20px;
     }
+    .form-control {
+      min-height: 48px;
+      line-height: 40px;
+      border-color: transparent;
+      background: rgba(163, 190, 241, 0.14);
+      border-radius: 10px;
+      color: #333b7b;
+    }
+    .form-control:focus {
+      border-color: rgb(13, 110, 253);
+      box-shadow: none;
+    }
   </style>
 </head>
 <body>
@@ -73,13 +85,13 @@
       <label for="currentPassword">Current Password</label>
       <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
     </div>
-    <button type="submit" class="btn btn-primary">Update Profile</button>
-  </form>
-  <form id="deleteAccountForm" action="<%= request.getContextPath() %>/deleteAccount" method="post" style="margin-top: 20px;">
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAccountModal" >Delete Account</button>
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-primary">Update Profile</button>
+      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAccountModal">Delete Account</button>
+    </div>
   </form>
 
-    <!-- Modal -->
+  <!-- Modal -->
   <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -95,7 +107,7 @@
               <label for="deleteAccountPassword">Current Password</label>
               <input type="password" class="form-control" id="deleteAccountPassword" name="currentPassword" required>
             </div>
-            <div class="modal-footer">
+            <div class="d-flex justify-content-between">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
               <button type="submit" class="btn btn-danger">Delete Account</button>
             </div>
