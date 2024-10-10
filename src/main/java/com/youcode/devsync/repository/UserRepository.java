@@ -4,14 +4,12 @@ import com.youcode.devsync.model.User;
 import com.youcode.devsync.model.enums.UserRole;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
-    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("myJPAUnit");
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("myJPAUnit");
 
-
-    public void save(User user){
+    public void save(User user) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         em.persist(user);
@@ -19,7 +17,7 @@ public class UserRepository {
         em.close();
     }
 
-    public void update(User user){
+    public void update(User user) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         em.merge(user);
@@ -27,7 +25,7 @@ public class UserRepository {
         em.close();
     }
 
-    public void delete(User user){
+    public void delete(User user) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         user = em.merge(user);
@@ -36,20 +34,20 @@ public class UserRepository {
         em.close();
     }
 
-    public User findByUsername(String username){
+    public User findByUsername(String username) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
         query.setParameter("username", username);
-        try{
+        try {
             return query.getSingleResult();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return null;
-        }finally {
+        } finally {
             em.close();
         }
     }
 
-    public List<User> findByRole(UserRole role){
+    public List<User> findByRole(UserRole role) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.userRole = :role", User.class);
         query.setParameter("role", role);
@@ -58,8 +56,15 @@ public class UserRepository {
         return users;
     }
 
-    public void close(){
-        if(emf != null){
+    public User findById(long id) {
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, id);
+        em.close();
+        return user;
+    }
+
+    public static void close() {
+        if (emf != null) {
             emf.close();
         }
     }

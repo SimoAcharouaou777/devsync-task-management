@@ -6,8 +6,12 @@ import com.youcode.devsync.repository.TagRepository;
 import java.util.List;
 
 public class TagService {
+
     private TagRepository tagRepository = new TagRepository();
 
+    public TagService(){
+        tagRepository = new TagRepository();
+    }
     public void insertFakeDataIfEmpty() {
         if (tagRepository.isEmpty()) {
             Tag tag1 = new Tag();
@@ -29,7 +33,7 @@ public class TagService {
     public List<Tag> getAllTags() {
         return tagRepository.findAll();
     }
-
+    public Tag findById(long id) {return tagRepository.findById(id);}
     public void close() {
         tagRepository.close();
     }

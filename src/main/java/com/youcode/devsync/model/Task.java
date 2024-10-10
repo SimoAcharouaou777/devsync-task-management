@@ -20,7 +20,7 @@ public class Task {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assigned_to", referencedColumnName = "id")
     @OnDelete(action =  OnDeleteAction.SET_NULL)
     private User assignedTo;
@@ -42,13 +42,23 @@ public class Task {
     @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
 
-    @ManyToMany
+    @Column(name = "canBeReassigned", nullable = false)
+    private boolean canBeReassigned = true;
+
+    @Column(name = "overdue", nullable = false)
+    private boolean overdue = false;
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "task_tags",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChangeRequest> changeRequests;
 
     // Getters and Setters
     public long getId() {
@@ -129,5 +139,18 @@ public class Task {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public boolean isCanBeReassigned() {
+        return canBeReassigned;
+    }
+    public void setCanBeReassigned(boolean canBeReassigned) {
+        this.canBeReassigned = canBeReassigned;
+    }
+    public boolean isOverdue() {
+        return overdue;
+    }
+    public void setOverdue(boolean overdue) {
+        this.overdue = overdue;
     }
 }
