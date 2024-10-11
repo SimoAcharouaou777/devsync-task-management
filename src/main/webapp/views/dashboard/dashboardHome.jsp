@@ -37,6 +37,9 @@
             flex: 1;
             padding: 20px;
         }
+        .card {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -51,6 +54,48 @@
 <div class="content">
     <h1>Welcome to the Dashboard</h1>
     <p>Select an option from the sidebar to get started.</p>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text"><%= request.getAttribute("totalUsers") %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-secondary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Managers</h5>
+                    <p class="card-text"><%= request.getAttribute("totalManagers") %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Total Tasks</h5>
+                    <p class="card-text"><%= request.getAttribute("totalTasks") %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Completed Tasks</h5>
+                    <p class="card-text"><%= request.getAttribute("completedTasks") %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Non-Completed Tasks</h5>
+                    <p class="card-text"><%= request.getAttribute("nonCompletedTasks") %></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
