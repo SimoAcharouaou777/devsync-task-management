@@ -7,10 +7,10 @@ import java.util.List;
 
 public class TagService {
 
-    private TagRepository tagRepository = new TagRepository();
+    private  TagRepository tagRepository ;
 
-    public TagService(){
-        tagRepository = new TagRepository();
+    public TagService(TagRepository tagRepository){
+        this.tagRepository =  tagRepository;
     }
     public void insertFakeDataIfEmpty() {
         if (tagRepository.isEmpty()) {
