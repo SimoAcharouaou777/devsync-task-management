@@ -88,18 +88,17 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.9.0-M1</version>
+      <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.9.0-M1</version>
+      <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
 
-    <!-- Mockito -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
@@ -107,16 +106,23 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Mockito JUnit 5 integration -->
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>4.0.0</version>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.200</version>
       <scope>test</scope>
     </dependency>
+
 
   </dependencies>
   <build>
     <finalName>devsync</finalName>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0-M5</version>
+        </plugin>
+      </plugins>
   </build>
 </project>

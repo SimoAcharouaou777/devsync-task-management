@@ -20,6 +20,7 @@ class TagServiceTest {
     TagRepository tagRepository;
     @InjectMocks
     TagService tagService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -33,8 +34,10 @@ class TagServiceTest {
         tag1.setName("Urgent");
         tag2.setName("Important");
         tag3.setName("Optional");
+
         List<Tag> mockTagList = Arrays.asList(tag1, tag2, tag3);
         when(tagRepository.findAll()).thenReturn(mockTagList);
+
         List<Tag> result = tagService.getAllTags();
         assertEquals(3, result.size());
         assertEquals("Urgent", result.get(0).getName());
