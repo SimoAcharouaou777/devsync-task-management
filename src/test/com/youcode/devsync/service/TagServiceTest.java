@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -47,5 +48,13 @@ class TagServiceTest {
 
     @Test
     void findById() {
+        Tag tag1 = new Tag();
+        Tag tag2 = new Tag();
+        tag1.setName("Urgent");
+        tag2.setName("Optional");
+        when(tagRepository.findById(2)).thenReturn(tag2);
+        Tag result = tagService.findById(2);
+        assertEquals("Optional",result.getName());
+
     }
 }
