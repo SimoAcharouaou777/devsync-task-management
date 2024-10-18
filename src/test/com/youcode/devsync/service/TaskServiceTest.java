@@ -11,8 +11,11 @@ import org.mockito.MockitoAnnotations;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 class TaskServiceTest {
 
@@ -26,7 +29,7 @@ class TaskServiceTest {
     }
 
     @Test
-    void verifyTaskDeadLine() {
+    void verifyTaskWrongDeadLine() {
         Task task = new Task();
         task.setTitle("task title");
         task.setDescription("task description");
@@ -38,7 +41,19 @@ class TaskServiceTest {
     }
 
     @Test
-    void getTasksById() {
+    void verifyTaskCorrectDeadLine(){
+        Task task = new Task();
+        task.setTitle("task title");
+        task.setDescription("task description");
+        task.setDeadline(Timestamp.valueOf("2027-10-04 00:00:00"));
+        task.setStatus("PENDING");
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        assertTrue(task.getDeadline().after(now), "the task is inserted successfully");
+    }
+
+    @Test
+    void getTasksById1() {
+
     }
 
     @Test
