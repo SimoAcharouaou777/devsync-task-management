@@ -51,28 +51,5 @@ class TaskServiceTest {
         assertTrue(task.getDeadline().after(now), "the task is inserted successfully");
     }
 
-    @Test
-    void getTasksById1() {
 
-    }
-
-    @Test
-    void getAllTasks() {
-    }
-
-    @Test
-    void getTasksByCreatorId() {
-    }
-
-    @Test
-    void deleteTask() {
-    }
-
-    @Test
-    void updateTask() {
-    }
-
-    @Test
-    void getOverdueTasks() {
-    }
 }
