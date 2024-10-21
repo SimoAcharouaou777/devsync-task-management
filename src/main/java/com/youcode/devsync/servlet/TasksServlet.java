@@ -5,6 +5,7 @@ import com.youcode.devsync.model.Tag;
 import com.youcode.devsync.model.Task;
 import com.youcode.devsync.model.User;
 import com.youcode.devsync.model.enums.UserRole;
+import com.youcode.devsync.repository.TagRepository;
 import com.youcode.devsync.scheduler.ChangeRequestCheckerJob;
 import com.youcode.devsync.service.TagService;
 import com.youcode.devsync.service.TaskService;
@@ -36,8 +37,9 @@ public class TasksServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        TagRepository tagRepository = new TagRepository();
         userService = new UserService();
-        tagService = new TagService();
+        tagService = new TagService(tagRepository);
         taskService = new TaskService();
 
         try {

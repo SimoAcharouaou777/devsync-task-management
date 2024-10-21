@@ -1,6 +1,7 @@
 package com.youcode.devsync.servlet;
 
 import com.youcode.devsync.model.Tag;
+import com.youcode.devsync.repository.TagRepository;
 import com.youcode.devsync.service.TagService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,7 +19,8 @@ public class IndexServlet extends HttpServlet {
 
     @Override
     public void init(){
-        tagService = new TagService();
+        TagRepository tagRepository = new TagRepository();
+        tagService = new TagService(tagRepository);
         tagService.insertFakeDataIfEmpty();
     }
 
